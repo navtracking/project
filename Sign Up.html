@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .signup-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+        .signup-container h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .signup-container input[type="text"],
+        .signup-container input[type="email"],
+        .signup-container input[type="password"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .signup-container input[type="submit"] {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .signup-container input[type="submit"]:hover {
+            background-color: #004b99;
+        }
+
+        .signup-container p {
+            margin-top: 20px;
+        }
+
+        .signup-container p a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .signup-container p a:hover {
+            text-decoration: underline;
+        }
+
+        .error {
+            color: red;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+  
+    <div class="signup-container">
+        <h2>Sign Up</h2>
+        <form id="signup-form" action="/submit_signup" method="post">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+            <input type="submit" value="Sign Up">
+            <div class="error" id="error-message"></div>
+        </form>
+        <p>Already have an account? <a href="/Login.html">Log In</a></p>
+    </div>
+
+    <script>
+        document.getElementById('signup-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const username = event.target.username.value;
+            const email = event.target.email.value;
+            const password = event.target.password.value;
+            const confirmPassword = event.target.confirm_password.value;
+            const errorMessage = document.getElementById('error-message');
+            
+            // Clear previous error message
+            errorMessage.textContent = '';
+            
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match.';
+                return;
+            }
+            
+            // You can add more validation checks here if needed
+            
+            // If all validations pass, submit the form data
+            const formData = new FormData(event.target);
+            
+            fetch('/submit_signup', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Redirect or show success message
+                    window.location.href = '/success_page.html';
+                } else {
+                    // Show error message from server
+                    errorMessage.textContent = data.message || 'An error occurred. Please try again.';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                errorMessage.textContent = 'An error occurred. Please try again.';
+            });
+        });
+    </script>
+</body>
+</html>
